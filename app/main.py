@@ -1,5 +1,5 @@
 from collections import Counter, defaultdict, deque
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import json
 import math
 from pathlib import Path
@@ -58,7 +58,11 @@ APP_LOG_PATH = Path("fileHand.log")
 
 
 def now_local() -> datetime:
-    return datetime.now().replace(microsecond=0)
+    return datetime.now(timezone.utc).astimezone().replace(microsecond=0)
+
+
+def get_local_tz_offset() -> int:
+    return round((datetime.now() - datetime.utcnow()).total_seconds() / 3600)
 
 
 def cleanup_failed_attempts(ip: str, current_time: datetime) -> None:
@@ -182,7 +186,11 @@ def build_chart(hours: int = 12) -> list[dict]:
         bucket_index[label] = bucket
 
     for event in event_history:
-        event_time = datetime.fromisoformat(event["timestamp"])
+        event_ts = event["timestamp"]
+        try:
+            event_time = datetime.fromisoformat(event_ts)
+        except ValueError:
+            event_time = datetime.strptime(event_ts.replace(" ", "T"), "%Y-%m-%dT%H:%M:%S")
         label = event_time.replace(minute=0, second=0, microsecond=0).strftime("%H:%M")
         bucket = bucket_index.get(label)
         if not bucket:
