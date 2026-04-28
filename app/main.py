@@ -2,11 +2,10 @@ from collections import Counter, defaultdict, deque
 from datetime import datetime, timedelta
 import json
 import math
-import os
 from pathlib import Path
+import re
 
 FRONTEND_DIST = Path(__file__).parent.parent / "dist"
-import re
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,7 +18,6 @@ from app.utils import logger
 mylog = logger.set_log()
 
 app = FastAPI()
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
