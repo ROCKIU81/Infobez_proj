@@ -195,9 +195,9 @@ def build_chart(hours: int = 12) -> list[dict]:
         bucket = bucket_index.get(label)
         if not bucket:
             continue
-        if event["status"] == "blocked":
+        if event["status"] == "blocked" or "auth_blocked" in event["anomalies"]:
             bucket["blocked"] += 1
-        if event["status"] != "success" and event["anomalies"]:
+        if event["status"] != "success":
             bucket["suspicious"] += 1
         if "sql_injection" in event["anomalies"]:
             bucket["sqlInjection"] += 1
