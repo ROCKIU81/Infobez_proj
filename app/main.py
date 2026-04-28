@@ -178,7 +178,14 @@ def build_chart(hours: int = 12) -> list[dict]:
             microsecond=0,
         )
         label = bucket_time.strftime("%H:%M")
-        bucket = {"label": label, "suspicious": 0, "blocked": 0, "sqlInjection": 0}
+        bucket = {
+            "label": label,
+            "total": 0,
+            "success": 0,
+            "suspicious": 0,
+            "blocked": 0,
+            "sqlInjection": 0,
+        }
         buckets.append(bucket)
         bucket_index[label] = bucket
 
@@ -192,6 +199,9 @@ def build_chart(hours: int = 12) -> list[dict]:
         bucket = bucket_index.get(label)
         if not bucket:
             continue
+        bucket["total"] += 1
+        if event["status"] == "success":
+            bucket["success"] += 1
         if event["status"] == "blocked" or "auth_blocked" in event["anomalies"]:
             bucket["blocked"] += 1
         if event["status"] != "success" or event["anomalies"]:

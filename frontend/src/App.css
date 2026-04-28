@@ -242,11 +242,21 @@
   overflow: visible;
 }
 
+.line-total,
+.line-success,
 .line-alert,
 .line-blocked,
 .line-sql {
   fill: none;
   stroke-width: 1.8;
+}
+
+.line-total {
+  stroke: #38bdf8;
+}
+
+.line-success {
+  stroke: #22c55e;
 }
 
 
@@ -264,6 +274,14 @@
 }
 
 
+
+.chart-point-total {
+  fill: #7dd3fc;
+}
+
+.chart-point-success {
+  fill: #86efac;
+}
 
 .chart-point-alert {
   fill: #fdba74;
@@ -307,6 +325,14 @@
   border-radius: 999px;
 }
 
+
+.legend-mark.total {
+  background: #38bdf8;
+}
+
+.legend-mark.success {
+  background: #22c55e;
+}
 
 .legend-mark.alert {
   background: #fb923c;

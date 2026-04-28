@@ -52,6 +52,8 @@ function ActivityChart({ points }) {
   const rawMax = Math.max(
     1,
     ...safePoints.flatMap((point) => [
+      point.total ?? 0,
+      point.success ?? 0,
       point.suspicious ?? 0,
       point.blocked ?? 0,
       point.sqlInjection ?? 0,
@@ -84,16 +86,22 @@ function ActivityChart({ points }) {
         ))}
       </div>
       <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="chart-svg">
+        <polyline className="line-total" points={buildLine('total')} />
+        <polyline className="line-success" points={buildLine('success')} />
         <polyline className="line-alert" points={buildLine('suspicious')} />
         <polyline className="line-blocked" points={buildLine('blocked')} />
         <polyline className="line-sql" points={buildLine('sqlInjection')} />
         {safePoints.map((point, index) => {
           const x = index * gap;
+          const totalY = 100 - clamp(point.total ?? 0);
+          const successY = 100 - clamp(point.success ?? 0);
           const suspiciousY = 100 - clamp(point.suspicious ?? 0);
           const blockedY = 100 - clamp(point.blocked ?? 0);
           const sqlInjectionY = 100 - clamp(point.sqlInjection ?? 0);
           return (
             <g key={point.label}>
+              <circle className="chart-point-total" cx={x} cy={totalY} r="1.5" />
+              <circle className="chart-point-success" cx={x} cy={successY} r="1.5" />
               <circle className="chart-point-alert" cx={x} cy={suspiciousY} r="1.5" />
               <circle className="chart-point-blocked" cx={x} cy={blockedY} r="1.5" />
               <circle className="chart-point-sql" cx={x} cy={sqlInjectionY} r="1.5" />
@@ -107,6 +115,14 @@ function ActivityChart({ points }) {
         ))}
       </div>
       <div className="chart-legend">
+        <span>
+          <i className="legend-mark total" />
+          Все события
+        </span>
+        <span>
+          <i className="legend-mark success" />
+          Успешные входы
+        </span>
         <span>
           <i className="legend-mark alert" />
           Подозрительные события
