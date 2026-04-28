@@ -5,7 +5,7 @@ import math
 import os
 from pathlib import Path
 
-FRONTEND_DIST = Path(__file__).parent.parent / "frontend" / "dist"
+FRONTEND_DIST = Path(__file__).parent.parent / "dist"
 import re
 
 from fastapi import FastAPI, Request
