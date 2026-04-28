@@ -11,7 +11,6 @@ import re
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from app.utils import logger
@@ -20,9 +19,6 @@ from app.utils import logger
 mylog = logger.set_log()
 
 app = FastAPI()
-
-if FRONTEND_DIST.exists():
-    app.mount("/assets", StaticFiles(directory=str(FRONTEND_DIST)), name="assets")
 
 app.add_middleware(
     CORSMiddleware,
@@ -255,9 +251,21 @@ async def download_logs():
     )
 
 
+@app.get("/")
+async def serve_index():
+    if FRONTEND_DIST.exists():
+        index_path = FRONTEND_DIST / "index.html"
+        if index_path.exists():
+            return FileResponse(index_path)
+    return {"error": "Not found"}
+
+
 @app.get("/{full_path:path}")
 async def serve_frontend(full_path: str):
     if FRONTEND_DIST.exists():
+        file_path = FRONTEND_DIST / full_path
+        if file_path.exists():
+            return FileResponse(file_path)
         index_path = FRONTEND_DIST / "index.html"
         if index_path.exists():
             return FileResponse(index_path)
