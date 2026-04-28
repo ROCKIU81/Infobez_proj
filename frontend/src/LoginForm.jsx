@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = import.meta.env.DEV ? 'http://localhost:8000' : '';
 
 const anomalyLabels = {
   sql_injection: 'Признак SQL-инъекции',
