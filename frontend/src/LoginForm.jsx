@@ -190,10 +190,16 @@ function LoginForm() {
 
   const handleClearHistory = async () => {
     setLoading(true);
+    setDashboard(emptyDashboard);
+    setFeedback(null);
+
     try {
       const response = await fetch(`${API_BASE}/api/history/clear`, {
         method: 'POST',
       });
+      if (!response.ok) {
+        throw new Error('clear failed');
+      }
       const data = await response.json();
       setDashboard(data.dashboard ?? emptyDashboard);
       setFeedback({
@@ -203,6 +209,7 @@ function LoginForm() {
       });
     } catch (error) {
       console.error('Не удалось очистить историю', error);
+      setDashboard(emptyDashboard);
       setFeedback({
         severity: 'error',
         message: 'Не удалось очистить историю логов.',
