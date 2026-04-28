@@ -22,7 +22,7 @@ mylog = logger.set_log()
 app = FastAPI()
 
 if FRONTEND_DIST.exists():
-    app.mount("/static", StaticFiles(directory=str(FRONTEND_DIST)), name="static")
+    app.mount("/assets", StaticFiles(directory=str(FRONTEND_DIST)), name="assets")
 
 app.add_middleware(
     CORSMiddleware,
