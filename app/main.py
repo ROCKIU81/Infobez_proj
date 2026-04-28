@@ -201,7 +201,11 @@ def build_chart(hours: int = 12) -> list[dict]:
         bucket["total"] += 1
         if event["status"] == "blocked" or "auth_blocked" in event["anomalies"]:
             bucket["blocked"] += 1
-        if event["status"] != "success" or event["anomalies"]:
+        if (
+            "failed_burst" in event["anomalies"]
+            or "auth_blocked" in event["anomalies"]
+            or event["status"] == "blocked"
+        ):
             bucket["suspicious"] += 1
         if "sql_injection" in event["anomalies"]:
             bucket["sqlInjection"] += 1
