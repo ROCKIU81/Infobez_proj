@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 
 FRONTEND_DIST = Path(__file__).parent.parent / "dist"
+APP_TIMEZONE = timezone(timedelta(hours=7))
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -58,11 +59,7 @@ APP_LOG_PATH = Path("fileHand.log")
 
 
 def now_local() -> datetime:
-    return datetime.now(timezone.utc).astimezone().replace(microsecond=0)
-
-
-def get_local_tz_offset() -> int:
-    return round((datetime.now() - datetime.utcnow()).total_seconds() / 3600)
+    return datetime.now(APP_TIMEZONE).replace(microsecond=0)
 
 
 def cleanup_failed_attempts(ip: str, current_time: datetime) -> None:
