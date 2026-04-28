@@ -181,7 +181,6 @@ def build_chart(hours: int = 12) -> list[dict]:
         bucket = {
             "label": label,
             "total": 0,
-            "success": 0,
             "suspicious": 0,
             "blocked": 0,
             "sqlInjection": 0,
@@ -200,8 +199,6 @@ def build_chart(hours: int = 12) -> list[dict]:
         if not bucket:
             continue
         bucket["total"] += 1
-        if event["status"] == "success":
-            bucket["success"] += 1
         if event["status"] == "blocked" or "auth_blocked" in event["anomalies"]:
             bucket["blocked"] += 1
         if event["status"] != "success" or event["anomalies"]:
