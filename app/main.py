@@ -2,12 +2,16 @@ from collections import Counter, defaultdict, deque
 from datetime import datetime, timedelta
 import json
 import math
+import os
 from pathlib import Path
+
+FRONTEND_DIST = Path(__file__).parent.parent / "frontend" / "dist"
 import re
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from app.utils import logger
@@ -16,6 +20,10 @@ from app.utils import logger
 mylog = logger.set_log()
 
 app = FastAPI()
+
+if FRONTEND_DIST.exists():
+    app.mount("/static", StaticFiles(directory=str(FRONTEND_DIST)), name="static")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -245,6 +253,15 @@ async def download_logs():
         media_type="text/plain",
         filename="security_events.log",
     )
+
+
+@app.get("/{full_path:path}")
+async def serve_frontend(full_path: str):
+    if FRONTEND_DIST.exists():
+        index_path = FRONTEND_DIST / "index.html"
+        if index_path.exists():
+            return FileResponse(index_path)
+    return {"error": "Not found"}
 
 
 @app.post("/api/login")
