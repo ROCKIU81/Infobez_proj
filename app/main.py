@@ -34,8 +34,8 @@ class Auth(BaseModel):
 
 FAILED_WINDOW = timedelta(minutes=5)
 BLOCK_DURATION = timedelta(minutes=15)
-FAILED_WARNING_THRESHOLD = 3
-FAILED_BLOCK_THRESHOLD = 5
+FAILED_WARNING_THRESHOLD = 2
+FAILED_BLOCK_THRESHOLD = 3
 MAX_EVENTS = 200
 MAX_ALERTS = 50
 SUSPICIOUS_HOURS = {0, 1, 2, 3, 4, 5}
@@ -197,7 +197,7 @@ def build_chart(hours: int = 12) -> list[dict]:
             continue
         if event["status"] == "blocked" or "auth_blocked" in event["anomalies"]:
             bucket["blocked"] += 1
-        if event["status"] != "success":
+        if event["status"] != "success" or event["anomalies"]:
             bucket["suspicious"] += 1
         if "sql_injection" in event["anomalies"]:
             bucket["sqlInjection"] += 1
