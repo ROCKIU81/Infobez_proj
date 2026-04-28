@@ -49,7 +49,7 @@ function StatCard({ label, value, accent }) {
 
 function ActivityChart({ points }) {
   const safePoints = points.length ? points : emptyDashboard.chart;
-  const maxValue = Math.max(
+  const rawMax = Math.max(
     1,
     ...safePoints.flatMap((point) => [
       point.suspicious ?? 0,
@@ -57,14 +57,17 @@ function ActivityChart({ points }) {
       point.sqlInjection ?? 0,
     ]),
   );
+  const maxValue = rawMax || 1;
   const chartHeight = 220;
   const gap = safePoints.length > 1 ? 100 / (safePoints.length - 1) : 100;
+
+  const clamp = (val) => Math.max(0, Math.min(100, (val / maxValue) * 100));
 
   const buildLine = (key) =>
     safePoints
       .map((point, index) => {
         const x = index * gap;
-        const y = 100 - (point[key] / maxValue) * 100;
+        const y = 100 - clamp(point[key] ?? 0);
         return `${x},${y}`;
       })
       .join(' ');
@@ -86,9 +89,9 @@ function ActivityChart({ points }) {
         <polyline className="line-sql" points={buildLine('sqlInjection')} />
         {safePoints.map((point, index) => {
           const x = index * gap;
-          const suspiciousY = 100 - ((point.suspicious ?? 0) / maxValue) * 100;
-          const blockedY = 100 - ((point.blocked ?? 0) / maxValue) * 100;
-          const sqlInjectionY = 100 - ((point.sqlInjection ?? 0) / maxValue) * 100;
+          const suspiciousY = 100 - clamp(point.suspicious ?? 0);
+          const blockedY = 100 - clamp(point.blocked ?? 0);
+          const sqlInjectionY = 100 - clamp(point.sqlInjection ?? 0);
           return (
             <g key={point.label}>
               <circle className="chart-point-alert" cx={x} cy={suspiciousY} r="1.5" />
@@ -462,8 +465,12 @@ function LoginForm() {
                     </Typography>
                   </div>
                   <div className="chip-row">
-                    {event.anomalies.length === 0 ? (
+                    {event.anomalies.length === 0 && event.status === "success" ? (
                       <Chip size="small" color="success" label="Норма" />
+                    ) : event.status === "blocked" ? (
+                      <Chip size="small" color="error" label="Заблокирован" />
+                    ) : event.status === "failed" ? (
+                      <Chip size="small" color="error" label="Неудача" />
                     ) : (
                       event.anomalies.map((anomaly) => (
                         <Chip
