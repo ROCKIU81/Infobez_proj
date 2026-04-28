@@ -242,16 +242,11 @@
   overflow: visible;
 }
 
-.line-total,
 .line-alert,
 .line-blocked,
 .line-sql {
   fill: none;
   stroke-width: 1.8;
-}
-
-.line-total {
-  stroke: #38bdf8;
 }
 
 
@@ -269,10 +264,6 @@
 }
 
 
-
-.chart-point-total {
-  fill: #7dd3fc;
-}
 
 .chart-point-alert {
   fill: #fdba74;
@@ -316,10 +307,6 @@
   border-radius: 999px;
 }
 
-
-.legend-mark.total {
-  background: #38bdf8;
-}
 
 .legend-mark.alert {
   background: #fb923c;
